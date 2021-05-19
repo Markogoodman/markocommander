@@ -1,6 +1,9 @@
 package sql2struct
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 type DBModel struct {
 	DBEngine *sql.DB
@@ -26,4 +29,16 @@ type TableColumn struct {
 
 func NewDBModel(info *DBInfo) *DBModel {
 	return &DBModel{DBInfo: info}
+}
+
+func (m *DBModel) Connect() error {
+	var err error
+	s := "%s:%s@tcp(%s)/information_schema?" +
+		"charset=%s&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf(s, m.DBInfo.UserName, m.DBInfo.Password, m.DBInfo.Host, m.DBInfo.Charset)
+	m.DBEngine, err = sql.Open(m.DBInfo.DBType, dsn)
+	if err != nil {
+		return err
+	}
+	return nil
 }
