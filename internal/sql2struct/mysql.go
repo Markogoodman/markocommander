@@ -6,6 +6,17 @@ import (
 	"fmt"
 )
 
+const structTpl = `type {{.TableName | ToCamelCase}} struct{
+{{range .Columns}}{{ $length := len .Comment}} {{if gt $length 0}}//
+	{{.Comment}} {{else}}// {{.Name}} {{end}}
+	{{ $typeLen := len .Type}} {{if gt $typeLen 0 }}{{.Name | ToCamelCase}}
+	{{.Type}} {{.Tag}}{{ else }}{{.Name}}{{end}}
+{{end}}
+}
+func (model {{.TableName | ToCamelCase}}) tableName() string{
+	return "{.TableName}"
+}`
+
 var DBTypeToStructType = map[string]string{
 	"int":       "int32",
 	"tinyint":   "int8",
