@@ -2,8 +2,22 @@ package sql2struct
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
+
+var DBTypeToStructType = map[string]string{
+	"int":       "int32",
+	"tinyint":   "int8",
+	"smallint":  "int",
+	"mediumint": "int64",
+	"bigint":    "int64",
+	"bit":       "int",
+	"bool":      "bool",
+	"enum":      "string",
+	"set":       "string",
+	"varchar":   "string",
+}
 
 type DBModel struct {
 	DBEngine *sql.DB
@@ -41,4 +55,29 @@ func (m *DBModel) Connect() error {
 		return err
 	}
 	return nil
+}
+func (m *DBModel) GetColumns(dbName, tableName string) ([]*TableColumn, error) {
+	query := "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, " +
+		"IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT" +
+		"FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
+	rows, err := m.DBEngine.Query(query, dbName, tableName)
+	if err != nil {
+		return nil, err
+	}
+	if rows == nil {
+		return nil, errors.New("No data")
+	}
+	defer rows.Close()
+
+	var columns []*TableColumn
+	for rows.Next() {
+		var col TableColumn
+		err := rows.Scan(&col.ColumnName, &col.DataType, &col.ColumnKey, &col.IsNullable, &col.ColumnType, &col.ColumnComment)
+		if err != nil {
+			return nil, err
+		}
+		columns = append(columns, &col)
+	}
+	return columns, nil
+
 }
