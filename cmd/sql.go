@@ -63,7 +63,7 @@ func init() {
 	sql2structCmd.Flags().StringVarP(&username, "username", "", "", "username")
 	sql2structCmd.Flags().StringVarP(&password, "password", "", "", "password")
 	sql2structCmd.Flags().StringVarP(&host, "host", "", "127.0.0.1:3306", "host")
-	sql2structCmd.Flags().StringVarP(&charset, "charset", "", "utf8mb4", "charset")
+	sql2structCmd.Flags().StringVarP(&charset, "charset", "", "", "charset")
 	sql2structCmd.Flags().StringVarP(&dbType, "type", "", "mysql", "dbType")
 	sql2structCmd.Flags().StringVarP(&dbName, "db", "", "", "dbName")
 	sql2structCmd.Flags().StringVarP(&tableName, "table", "", "", "tableName")

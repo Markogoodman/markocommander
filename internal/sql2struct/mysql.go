@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const structTpl = `type {{.TableName | ToCamelCase}} struct{
@@ -14,8 +16,9 @@ const structTpl = `type {{.TableName | ToCamelCase}} struct{
 {{end}}
 }
 func (model {{.TableName | ToCamelCase}}) tableName() string{
-	return "{.TableName}"
-}`
+	return "{{.TableName}}"
+}
+`
 
 var DBTypeToStructType = map[string]string{
 	"int":       "int32",
@@ -68,9 +71,11 @@ func (m *DBModel) Connect() error {
 	return nil
 }
 func (m *DBModel) GetColumns(dbName, tableName string) ([]*TableColumn, error) {
-	query := "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, " +
-		"IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT" +
-		"FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
+	query := `
+	SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY,
+		IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT
+		FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+		`
 	rows, err := m.DBEngine.Query(query, dbName, tableName)
 	if err != nil {
 		return nil, err

@@ -21,7 +21,7 @@ type StructColumn struct {
 
 type StructTemplateDB struct {
 	TableName string
-	Collumns  []*StructColumn
+	Columns   []*StructColumn
 }
 
 func NewStructTemplate() *StructTemplate {
@@ -49,7 +49,7 @@ func (t *StructTemplate) Generate(tableName string, tplColumns []*StructColumn) 
 
 	tplDB := StructTemplateDB{
 		TableName: tableName,
-		Collumns:  tplColumns,
+		Columns:   tplColumns,
 	}
 	err := tpl.Execute(os.Stdout, tplDB)
 	if err != nil {
