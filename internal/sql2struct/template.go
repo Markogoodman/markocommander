@@ -2,8 +2,8 @@ package sql2struct
 
 import (
 	"fmt"
-	"html/template"
 	"os"
+	"text/template"
 
 	"github.com/Markogoodman/markocommander/internal/word"
 )
@@ -31,10 +31,10 @@ func NewStructTemplate() *StructTemplate {
 func (t *StructTemplate) AssemblyColumns(tbColumns []*TableColumn) []*StructColumn {
 	tplColumns := make([]*StructColumn, 0, len(tbColumns))
 	for _, column := range tbColumns {
-		tag := fmt.Sprintf("`"+"json:"+"\"%s\""+"`", column.ColumnName)
+		tag := fmt.Sprintf("`"+"json:"+"\""+"%s"+"\""+"`", column.ColumnName)
 		tplColumns = append(tplColumns, &StructColumn{
 			Name:    column.ColumnName,
-			Type:    DBTypeToStructType[column.ColumnType],
+			Type:    DBTypeToStructType[column.DataType],
 			Tag:     tag,
 			Comment: column.ColumnComment,
 		})
