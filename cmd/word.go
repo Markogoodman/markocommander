@@ -24,33 +24,35 @@ var desc = strings.Join([]string{
 	"5: Camel case to underscore",
 }, "\n")
 
-var wordCmd = &cobra.Command{
-	Use:   "word",
-	Short: "word format transformer",
-	Long:  desc,
-	Run: func(cmd *cobra.Command, args []string) {
-		var content string
-		switch mode {
-		case ModeUpper:
-			content = word.ToUpper(str)
-		case ModeLower:
-			content = word.ToLower(str)
-		case ModeUnderscoreToUpperCamelCase:
-			content = word.UnderscoreToUpperCamelCase(str)
-		case ModeUnderscoreToLowerCamelCase:
-			content = word.UnderscoreToLowerCamelCase(str)
-		case ModeCamelCaseToUnderscore:
-			content = word.CamelCaseToUnderscore(str)
-		default:
-			log.Fatal("Unsupported mode")
-		}
-		log.Printf("Output: %s", content)
-	},
-}
-var str string
-var mode int8
-
-func init() {
+func NewWordCmd() *cobra.Command {
+	var (
+		str  string
+		mode int8
+	)
+	wordCmd := &cobra.Command{
+		Use:   "word",
+		Short: "word format transformer",
+		Long:  desc,
+		Run: func(cmd *cobra.Command, args []string) {
+			var content string
+			switch mode {
+			case ModeUpper:
+				content = word.ToUpper(str)
+			case ModeLower:
+				content = word.ToLower(str)
+			case ModeUnderscoreToUpperCamelCase:
+				content = word.UnderscoreToUpperCamelCase(str)
+			case ModeUnderscoreToLowerCamelCase:
+				content = word.UnderscoreToLowerCamelCase(str)
+			case ModeCamelCaseToUnderscore:
+				content = word.CamelCaseToUnderscore(str)
+			default:
+				log.Fatal("Unsupported mode")
+			}
+			log.Printf("Output: %s", content)
+		},
+	}
 	wordCmd.Flags().StringVarP(&str, "str", "s", "", "Input string")
 	wordCmd.Flags().Int8VarP(&mode, "mode", "m", 0, "Input mode")
+	return wordCmd
 }
